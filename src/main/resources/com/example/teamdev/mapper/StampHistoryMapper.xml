@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.teamdev.mapper.StampHistoryMapper">
+    <!--対象年月、対象従業員IDの打刻記録情報を取得する-->
+    <!--対象年月の日数分行を取得したいので、MySQLのSQL文でカレンダーテーブル（generated_dates）を作成し、右外部結合する-->
+    <select id="getStampHistoryByYearMonthEmployeeId" parameterType="map"
+            resultType="com.example.teamdev.entity.StampHistoryDisplay">
+        SELECT
+        COALESCE(sh.id, NULL) AS id,
+        DATE_FORMAT(gd.date, '%Y') AS year,
+        DATE_FORMAT(gd.date, '%m') AS month,
+        DATE_FORMAT(gd.date, '%d') AS day,
+        CASE DAYOFWEEK(gd.date)
+        WHEN 1 THEN '日'
+        WHEN 2 THEN '月'
+        WHEN 3 THEN '火'
+        WHEN 4 THEN '水'
+        WHEN 5 THEN '木'
+        WHEN 6 THEN '金'
+        WHEN 7 THEN '土'
+        END AS day_of_week,
+        #{employeeId} AS employee_id,
+        CONCAT_WS(' ', emp.first_name, emp.last_name) AS employee_name,
+        CONCAT_WS(' ', emp2.first_name, emp2.last_name) AS update_employee_name,
+        TIME_FORMAT(sh.in_time, '%H:%i') AS in_time,
+        TIME_FORMAT(sh.out_time, '%H:%i') AS out_time,
+        DATE_FORMAT(sh.update_date, '%Y/%m/%d %H:%i') AS update_date
+        FROM
+        (
+        <foreach collection="datesInMonth" item="date" separator="UNION ALL">
+            SELECT #{date} AS date
+        </foreach>
+        ) AS gd
+        LEFT JOIN stamp_history sh ON
+        YEAR(gd.date) = sh.year AND
+        MONTH(gd.date) = sh.month AND
+        DAY(gd.date) = sh.day AND
+        sh.employee_id = #{employeeId}
+        LEFT JOIN employee emp ON emp.id = #{employeeId}
+        LEFT JOIN employee emp2 ON sh.update_employee_id = emp2.id
+        ORDER BY gd.date ASC
+    </select>
+
+    <!-- データを挿入または更新する -->
+    <!--①saveStampHistory→saveに修正②ON DUPLICATE KEY UPDATEの重複のキー削除-->
+    <!--③IFNULL関数追記-->
+    <insert id="save" parameterType="com.example.teamdev.entity.StampHistory">
+        INSERT INTO stamp_history (
+        id, year, month, day, employee_id, in_time, out_time,
+        update_employee_id, update_date
+        ) VALUES (
+        #{id}, #{year}, #{month}, #{day}, #{employeeId}, #{inTime}, #{outTime},
+        #{updateEmployeeId}, #{updateDate}
+        )
+        ON DUPLICATE KEY UPDATE
+        in_time = IFNULL(in_time, VALUES(in_time)),
+        out_time = IFNULL(out_time, VALUES(out_time)),
+        update_employee_id = VALUES(update_employee_id),
+        update_date = VALUES(update_date)
+    </insert>
+    <!--更新の追記-->
+    <update id="update" parameterType="com.example.teamdev.entity.StampHistory">
+        UPDATE stamp_history
+        SET
+        year = #{year},
+        month = #{month},
+        day = #{day},
+        in_time = #{inTime},
+        out_time = #{outTime},
+        update_employee_id = #{updateEmployeeId},
+        update_date = #{updateDate}
+        WHERE id = #{id}
+    </update>
+</mapper>
