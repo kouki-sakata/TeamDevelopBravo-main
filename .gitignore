@@ -1,3 +1,5 @@
+aws-deploy
+.ebextensions
 .claude
 CLAUDE.md
 gemini.md

@@ -2,7 +2,7 @@
 
 ## 🌐 デプロイ先 & テストアカウント
 
-**URL:** http://my-spring-app-env.eba-kmwuwpfp.ap-northeast-1.elasticbeanstalk.com/
+**URL:** http://team-devolop-bravo2-env.eba-sxvugz9h.ap-northeast-1.elasticbeanstalk.com/
 
 下記アカウントでログインしてお試しいただけます。
 
@@ -100,12 +100,11 @@ Bootによる実践的なWebアプリケーション開発スキルの習得を�
 
 ### 🏗️ 開発環境の整備
 * **Docker化:** 開発環境をDocker Composeで統一し、環境構築の簡素化を実現
-* **CI/CDパイプライン:** GitHub Actionsによる自動ビルド・テスト・デプロイ
 * **テストデータ拡充:** 操作履歴テーブルに100件のテストデータを追加し、DataTablesの動作検証を充実
 
-### 👥 チーム開発のプロセス
+### 👥 開発のプロセス
 * **コーディング規約の策定:**
-  チーム内で変数名やインデントなどのコーディング規約を定め、コードの可読性と保守性を高めました。
+  変数名やインデントなどのコーディング規約を定め、コードの可読性と保守性を高めました。
 
 ## 🏁 セットアップと実行方法
 
@@ -250,7 +249,6 @@ TeamDevelopBravo-main/
 
 ### ✅ 完了済み
 * **ユーザー認証・認可機能の強化** - Spring Securityによる包括的セキュリティ実装
-* **CI/CDパイプラインの構築** - GitHub Actionsによる自動化
 * **DataTables統合** - 高機能テーブル表示の全画面実装
 * **UI/UXの改善** - モダンなデザインへの刷新
 
