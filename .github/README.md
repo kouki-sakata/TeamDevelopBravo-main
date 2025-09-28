@@ -1,297 +1,260 @@
-# CI/CD パイプライン ガイド
+# TeamDev 勤怠管理システム
 
-## 概要
+## 🌐 デプロイ先 & テストアカウント
 
-TeamDevelopプロジェクトでは、包括的なCI/CDパイプラインを実装しており、コード品質、セキュリティ、デプロイメントの自動化を行います。
+**URL:** http://team-devolop-bravo2-env.eba-sxvugz9h.ap-northeast-1.elasticbeanstalk.com/
 
-## パイプライン構成
+下記アカウントでログインしてお試しいただけます。
 
-### 1. Feature Branch Pipeline (`feature.yml`)
-**トリガー**: `feature/**`, `bugfix/**`, `hotfix/**` ブランチへのプッシュ・PR
+* **ユーザ名:** `test@gmail.com`
+* **パスワード:** `test`
 
-#### 実行ジョブ:
-- **Validate**: ブランチ名・コミットメッセージ・ファイルサイズのチェック
-- **Quick Test**: 高速な単体テスト実行
-- **Security Check**: セキュリティスキャンと機密情報チェック
-- **Code Analysis**: コード複雑度分析・TODO/FIXMEカウント
-- **Integration Test**: 統合テスト（条件付き）
-- **Build Test**: ビルド・Dockerイメージ作成テスト
+⚠️ **注意**
+本プロジェクトは現在も開発を継続しており、機能追加やリファクタリングを随時行っています。
 
-#### 特徴:
-- 高速フィードバック（平均5-10分）
-- 並列実行による効率化
-- 条件付き統合テスト（`[full-test]`コミット、またはPR時）
+---
 
-### 2. Main CI Pipeline (`ci.yml`)
-**トリガー**: `main`, `develop` ブランチへのプッシュ・PR
+## 📸 スクリーンショット
 
-#### 実行ジョブ:
-- **Test**: 完全な単体テストスイート
-- **Build**: アプリケーションビルド
-- **Security Scan**: OWASP Dependency Check、Trivyスキャン
-- **Docker Build**: セキュアなDockerイメージ作成
-- **Code Quality**: SonarCloud分析
-- **Deployment**: ステージング・本番環境デプロイ
+![home.png](src/main/resources/static/img/home.png)
 
-#### 特徴:
-- 包括的なテスト実行
-- セキュリティ重視の多層スキャン
-- 環境別デプロイメント
-- 自動通知機能
+## 🛠️ 技術スタック
 
-### 3. Release Pipeline (`release.yml`)
-**トリガー**: `v*.*.*` タグのプッシュ
+| カテゴリ | 技術 |
+| :--- | :--- |
+| **バックエンド** | Java 21, Spring Boot 3.x, Spring Security |
+| **フロントエンド** | HTML5, CSS3, JavaScript ES6, jQuery, DataTables |
+| **テンプレートエンジン** | Thymeleaf |
+| **データベース** | MySQL 8.0 |
+| **ビルドツール** | Gradle 8.14.2 |
+| **コンテナ** | Docker, Docker Compose |
+| **インフラ** | AWS Elastic Beanstalk |
+| **セキュリティ** | CSRF保護, パスワードハッシュ化, 認証・認可 |
+| **開発・連携ツール**| Git, GitHub, GitHub Actions (CI/CD) |
 
-#### 実行ジョブ:
-- **Create Release**: GitHub Release作成・変更履歴生成
-- **Build and Test**: リリース用ビルド・テスト
-- **Build Docker**: Container Registry への Docker イメージプッシュ
-- **Security Scan**: リリース前セキュリティチェック
-- **Deploy Production**: 本番環境デプロイ
-- **Rollback**: 失敗時の自動ロールバック
+## ✨ 概要
 
-#### 特徴:
-- セマンティックバージョニング対応
-- 自動変更履歴生成
-- Container Registry 統合
-- 失敗時自動ロールバック
+本アプリケーションは、職業訓練校のチーム開発で制作した企業向けの勤怠管理システムです。
 
-## ブランチ戦略
+チームメンバーと協力し、要件定義から設計、実装、テストまでの一連の開発プロセスを経験しました。本プロジェクトを通じて、Gitを用いたチームでの共同開発手法や、Spring
+Bootによる実践的なWebアプリケーション開発スキルの習得を目的としています。
 
-### Git Flow
-```
-main (本番)
-├── develop (開発)
-│   ├── feature/user-authentication
-│   ├── feature/api-improvements
-│   └── bugfix/login-issue
-├── hotfix/security-patch
-└── release/v1.2.0
-```
+## 🌟 主な機能
 
-### ブランチ命名規則
-- `feature/機能名` - 新機能開発
-- `bugfix/バグ名` - バグ修正
-- `hotfix/緊急修正名` - 緊急修正
-- `release/vX.Y.Z` - リリース準備
+### 🏠 ホーム画面
+* **モダンなUI:** Glassmorphism デザインとSVGアニメーションロゴを採用
+* **出退勤打刻:** 出勤・退勤時刻を記録します
+* **夜勤対応:** 日をまたぐ勤務に対応した打刻が可能です
+* **お知らせ表示:** 管理者が設定した重要なお知らせを表示します（公開フラグで制御）
 
-### コミットメッセージ規則
-```
-type: 簡潔な説明
+### 👥 従業員管理
+* **従業員情報の登録・更新:** 従業員の基本情報を管理します
+* **管理者権限設定:** 管理者フラグにより、特定の従業員に管理者権限を付与できます
+* **一括削除:** 複数の従業員情報を一括で削除できます
+* **メールアドレス重複チェック:** 登録時のリアルタイムチェックで、データの一意性を保証します
+* **DataTables統合:** ページング、ソート、検索機能付きの高機能テーブル表示
 
-詳細な説明（オプション）
+### 📊 データ管理・表示機能
+* **DataTables統合:** 以下の画面で高機能なテーブル表示を実装
+  - お知らせ管理画面
+  - 従業員情報画面
+  - 従業員情報出力画面
+  - 打刻記録編集画面（従業員選択）
+  - 操作履歴画面
+* **操作履歴記録:** 全てのデータ操作（登録・更新・削除）の履歴を記録し、追跡可能です
+* **日付フォーマット統一:** `yyyy-MM-dd` と `yyyy/MM/dd` 形式を自動で相互変換し、表示を統一します
 
-feat: 新機能追加
-fix: バグ修正
-docs: ドキュメント更新
-style: コードスタイル修正
-refactor: リファクタリング
-test: テスト追加・修正
-chore: その他のメンテナンス
-```
+### 🔒 セキュリティ機能
+* **Spring Security統合:** 包括的な認証・認可システム
+* **CSRF保護:** すべてのフォーム送信でCSRFトークンによる保護
+* **パスワードハッシュ化:** BCryptによる安全なパスワード管理
+* **セッション管理:** 安全なセッション管理とタイムアウト機能
 
-## セキュリティ対策
+## 💡 工夫した点・アピールポイント
 
-### 1. 静的解析
-- **OWASP Dependency Check**: 既知の脆弱性スキャン
-- **Trivy**: コンテナイメージ脆弱性スキャン
-- **GitLeaks**: 機密情報漏洩チェック
-- **SonarCloud**: コード品質・セキュリティ分析
+### 🎨 UI/UXの改善
+* **モダンなデザイン:** サインイン画面をshadcn/ui風のglassmorphismデザインに刷新
+* **SVGロゴ:** 時計をモチーフとしたアニメーション付きSVGロゴを自作
+* **DataTables統合:** 6つの主要画面にDataTablesを導入し、検索・ソート・ページング機能を実装
+* **レスポンシブ対応:** Bootstrap 5とDataTablesの responsive オプションでモバイル対応
 
-### 2. 動的チェック
-- **Container Security**: 非rootユーザー実行
-- **Network Security**: 最小限のポート露出
-- **Secrets Management**: GitHub Secrets利用
+### 🔧 技術的な挑戦
 
-### 3. アクセス制御
-```yaml
-permissions:
-  contents: read      # コードの読み取り
-  packages: write     # Container Registry書き込み
-  security-events: write  # セキュリティアラート
-```
+* **共通処理のモジュール化:**
+  日付フォーマットの変換など、複数箇所で利用されるロジックを`DateFormatUtil`などのユーティリティクラスに切り出しました。これにより、コードの重複を削減し、メンテナンス性を向上させています。
 
-## 環境管理
+* **データ整合性の担保:**
+  データベースのトランザクション管理を徹底し、従業員情報の一括削除や更新時にデータ不整合が発生しないよう設計しました。また、リアルタイムの入力検証によるメールアドレスの重複チェック機能も実装しています。
 
-### 環境構成
-```
-Development → Staging → Production
-     ↓           ↓         ↓
-   feature    develop    main
-```
+* **セキュリティ強化:**
+  - Spring Securityによる包括的な認証・認可システム
+  - CSRFトークンによる攻撃対策
+  - BCryptによるパスワードハッシュ化
+  - 包括的エラーハンドリングとロギング
 
-### 環境変数
-```yaml
-# 開発環境
-SPRING_PROFILES_ACTIVE: dev
-LOG_LEVEL_ROOT: DEBUG
+* **DataTables最適化:**
+  - サーバーサイドでのデータ処理とJSON応答
+  - 重複初期化防止機能
+  - 日本語化対応
+  - CSRF対応のAjax通信
 
-# ステージング環境  
-SPRING_PROFILES_ACTIVE: staging
-LOG_LEVEL_ROOT: INFO
+### 🏗️ 開発環境の整備
+* **Docker化:** 開発環境をDocker Composeで統一し、環境構築の簡素化を実現
+* **テストデータ拡充:** 操作履歴テーブルに100件のテストデータを追加し、DataTablesの動作検証を充実
 
-# 本番環境
-SPRING_PROFILES_ACTIVE: prod
-LOG_LEVEL_ROOT: WARN
-```
+### 👥 開発のプロセス
+* **コーディング規約の策定:**
+  変数名やインデントなどのコーディング規約を定め、コードの可読性と保守性を高めました。
 
-### デプロイメント戦略
-- **Blue-Green Deployment**: ゼロダウンタイムデプロイ
-- **Canary Release**: 段階的リリース
-- **Rollback Strategy**: 即座のロールバック機能
+## 🏁 セットアップと実行方法
 
-## 品質ゲート
+ローカル環境で本プロジェクトをセットアップする手順です。
 
-### コードカバレッジ
-- **単体テスト**: 最低70%
-- **統合テスト**: 最低50%
-- **E2Eテスト**: 主要機能100%
+### 🐳 Docker を使用した環境構築（推奨）
 
-### セキュリティ閾値
-- **CVSS Score**: 7.0以上で失敗
-- **脆弱性**: High以上で警告
-- **機密情報**: 検出で即座に失敗
+1. **リポジトリをクローンします。**
+   ```bash
+   git clone [リポジトリのURL]
+   cd TeamDevelopBravo-main
+   ```
 
-### パフォーマンス
-- **ビルド時間**: 10分以内
-- **テスト実行**: 5分以内
-- **デプロイ時間**: 3分以内
+2. **Docker Compose で環境を起動します。**
+   ```bash
+   # 環境変数ファイルをコピー
+   cp .env.example .env
+   
+   # Docker環境を起動
+   docker-compose up -d
+   ```
 
-## 監視・通知
+3. **ブラウザで `http://localhost:8080` にアクセスしてください。**
 
-### Slack通知
-```yaml
-チャンネル:
-#ci-cd         - パイプライン実行状況
-#deployments   - デプロイメント通知
-#security      - セキュリティアラート
-#releases      - リリース通知
-```
+### 💻 ローカル環境での直接実行
 
-### メトリクス監視
-- **Success Rate**: 成功率95%以上維持
-- **MTTR**: 平均復旧時間30分以内
-- **Deployment Frequency**: 週2回以上
+#### 前提条件
+* Java 21
+* MySQL 8.0
+* Gradle 8.14.2
 
-## トラブルシューティング
+#### 手順
 
-### よくある問題
+1. **リポジトリをクローンします。**
+   ```bash
+   git clone [リポジトリのURL]
+   cd TeamDevelopBravo-main
+   ```
 
-#### 1. テスト失敗
+2. **データベースをセットアップします。**
+   ```bash
+   # MySQLサーバーを起動
+   # データベースとテーブルを作成
+   mysql -u root -p < src/main/resources/01_schema.sql
+   mysql -u root -p < src/main/resources/02_data.sql
+   ```
+
+3. **アプリケーション設定を確認します。**
+   `src/main/resources/application.properties` のMySQL接続情報を環境に合わせて変更してください。
+
+4. **アプリケーションをビルド・実行します。**
+   ```bash
+   ./gradlew bootRun
+   ```
+
+5. **ブラウザで `http://localhost:8080` にアクセスしてください。**
+
+### ⚙️ 環境設定（Environment Profiles）
+
+本アプリケーションは、環境に応じて異なる設定を適用できます。
+
+#### 本番環境（デフォルト）
 ```bash
-# ローカルでのテスト実行
-./gradlew test --info
+# デフォルト設定で起動
+./gradlew bootRun
+```
 
-# 特定テストの実行
-./gradlew test --tests "AuthenticationServiceTest"
+#### 開発環境
+```bash
+# 開発環境設定を使用
+./gradlew bootRun --args='--spring.profiles.active=dev'
 
-# データベース接続確認
-docker-compose up -d db
+# または環境変数で指定
+SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
+```
+
+#### テスト環境（パスワードマイグレーション無効）
+```bash
+# テスト環境設定を使用（起動時のパスワードマイグレーションが無効化されます）
+./gradlew bootRun --args='--spring.profiles.active=test'
+
+# または環境変数で指定
+SPRING_PROFILES_ACTIVE=test ./gradlew bootRun
+```
+
+#### 個別設定による制御
+環境変数でパスワードマイグレーションのみを制御することも可能です：
+```bash
+# パスワードマイグレーションを無効化
+PASSWORD_MIGRATION_ENABLED=false ./gradlew bootRun
+
+# 環境識別子を設定
+APP_ENVIRONMENT=test ./gradlew bootRun
+```
+
+### 🔧 開発用コマンド
+
+```bash
+# テスト実行
 ./gradlew test
+
+# ビルド
+./gradlew build
+
+# Docker イメージビルド
+docker build -t teamdev:latest .
+
+# 開発ワークフロー実行
+./scripts/dev-workflow.sh
 ```
 
-#### 2. ビルド失敗
-```bash
-# 依存関係の確認
-./gradlew dependencies
+## 📁 プロジェクト構成
 
-# キャッシュクリア
-./gradlew clean build
-
-# Gradle Wrapper更新
-./gradlew wrapper --gradle-version 8.14.2
+```
+TeamDevelopBravo-main/
+├── .github/                    # GitHub Actions CI/CD設定
+├── docker/                     # Docker関連設定
+├── scripts/                    # 開発用スクリプト
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/teamdev/
+│   │   │   ├── config/         # Spring設定クラス
+│   │   │   ├── controller/     # MVCコントローラー
+│   │   │   ├── dto/           # DataTables用DTO
+│   │   │   ├── entity/        # データベースエンティティ
+│   │   │   ├── mapper/        # MyBatisマッパー
+│   │   │   ├── service/       # ビジネスロジック
+│   │   │   ├── util/          # ユーティリティクラス
+│   │   │   └── exception/     # 例外クラス
+│   │   └── resources/
+│   │       ├── static/        # CSS, JS, 画像ファイル
+│   │       ├── templates/     # Thymeleafテンプレート
+│   │       ├── *.sql         # データベーススキーマ・データ
+│   │       └── *.properties  # アプリケーション設定
+│   └── test/                  # テストコード
+├── build.gradle              # Gradle設定
+├── docker-compose.yml        # Docker Compose設定
+└── README.md                 # このファイル
 ```
 
-#### 3. Docker問題
-```bash
-# イメージビルドテスト
-docker build -t teamdev:test .
+## 🎯 今後の拡張予定
 
-# コンテナ実行テスト
-docker run -d --name test-app teamdev:test
+### ✅ 完了済み
+* **ユーザー認証・認可機能の強化** - Spring Securityによる包括的セキュリティ実装
+* **DataTables統合** - 高機能テーブル表示の全画面実装
+* **UI/UXの改善** - モダンなデザインへの刷新
 
-# ログ確認
-docker logs test-app
-```
-
-#### 4. セキュリティスキャン失敗
-```bash
-# ローカルでの脆弱性チェック
-./gradlew dependencyCheckAnalyze
-
-# 抑制設定の確認
-vim dependency-check-suppressions.xml
-
-# NVD データベース更新
-./gradlew dependencyCheckUpdate
-```
-
-### ログ確認
-```bash
-# GitHub Actions ログアクセス
-# Repository → Actions → 該当のワークフロー実行
-
-# アーティファクトダウンロード
-# テストレポート、セキュリティレポート等が利用可能
-```
-
-## ベストプラクティス
-
-### 1. 開発フロー
-```bash
-# フィーチャーブランチ作成
-git checkout -b feature/new-authentication
-
-# 頻繁なコミット
-git add .
-git commit -m "feat: add JWT token validation"
-
-# プッシュ前のローカルテスト
-./gradlew test
-docker build -t teamdev:local .
-
-# プッシュ
-git push origin feature/new-authentication
-```
-
-### 2. PR作成
-- **タイトル**: 明確で簡潔
-- **説明**: 変更内容の詳細
-- **レビュアー**: 適切な担当者指定
-- **チェックリスト**: 実装・テスト・ドキュメント
-
-### 3. マージ戦略
-- **Squash Merge**: feature → develop
-- **Merge Commit**: develop → main
-- **Fast-Forward**: hotfix → main
-
-### 4. セキュリティ
-- **機密情報**: GitHub Secretsに保存
-- **アクセストークン**: 最小権限の原則
-- **定期更新**: 依存関係の定期的な更新
-
-## 設定ファイル
-
-### 必要なSecrets
-```
-GitHub Repository Settings → Secrets and variables → Actions
-
-Required:
-- GITHUB_TOKEN (自動生成)
-
-Optional:
-- SONAR_TOKEN (SonarCloud連携)
-- SLACK_WEBHOOK (Slack通知)
-- NVD_API_KEY (高速脆弱性DB更新)
-```
-
-### 環境変数
-```yaml
-# .github/workflows/ci.yml
-env:
-  JAVA_VERSION: '21'
-  GRADLE_VERSION: '8.14.2'
-  REGISTRY: ghcr.io
-```
-
-これらの設定により、堅牢で効率的なCI/CDパイプラインを実現し、高品質なソフトウェアの継続的デリバリーを支援します。
+### 🚀 今後の計画
+* **REST API化** - バックエンドのAPIサーバー化
+* **フロントエンドのモダン化** - React/Vue.jsへの置き換え検討
+* **テストカバレッジの向上** - JUnitによる単体テストの充実
+* **パフォーマンス最適化** - データベースクエリ最適化
+* **多言語対応** - 国際化機能の拡充
